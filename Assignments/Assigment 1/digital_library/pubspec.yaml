@@ -1,0 +1,17 @@
+name: digital_library
+version: 0.0.1
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  path: ^1.8.0
+
+flutter:
+  uses-material-design: false
+
+# Assets
+flutter:
+  assets:
+    - assets/data/authors.json
+    - assets/data/library-catalog.json
+    - assets/data/members.json
