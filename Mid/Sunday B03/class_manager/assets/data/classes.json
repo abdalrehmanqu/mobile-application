@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Math 101",
+    "subject": "Mathematics",
+    "grade": "10th Grade"
+  },
+  {
+    "id": 2,
+    "name": "English Literature",
+    "subject": "English",
+    "grade": "11th Grade"
+  },
+  {
+    "id": 3,
+    "name": "Physics Advanced",
+    "subject": "Physics",
+    "grade": "12th Grade"
+  },
+  {
+    "id": 4,
+    "name": "Computer Science",
+    "subject": "Computer Science",
+    "grade": "11th Grade"
+  },
+  {
+    "id": 5,
+    "name": "Chemistry Lab",
+    "subject": "Chemistry",
+    "grade": "10th Grade"
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "name": "John Smith",
+    "studentId": "STU2024001",
+    "email": "john.smith@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+    "classId": 1
+  },
+  {
+    "id": 2,
+    "name": "Emma Johnson",
+    "studentId": "STU2024002",
+    "email": "emma.johnson@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/1.jpg",
+    "classId": 1
+  },
+  {
+    "id": 3,
+    "name": "Michael Brown",
+    "studentId": "STU2024003",
+    "email": "michael.brown@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/2.jpg",
+    "classId": 1
+  },
+  {
+    "id": 4,
+    "name": "Sophia Davis",
+    "studentId": "STU2024004",
+    "email": "sophia.davis@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/2.jpg",
+    "classId": 1
+  },
+  {
+    "id": 5,
+    "name": "William Wilson",
+    "studentId": "STU2024005",
+    "email": "william.wilson@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/3.jpg",
+    "classId": 2
+  },
+  {
+    "id": 6,
+    "name": "Olivia Martinez",
+    "studentId": "STU2024006",
+    "email": "olivia.martinez@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/3.jpg",
+    "classId": 2
+  },
+  {
+    "id": 7,
+    "name": "James Anderson",
+    "studentId": "STU2024007",
+    "email": "james.anderson@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/4.jpg",
+    "classId": 2
+  },
+  {
+    "id": 8,
+    "name": "Ava Taylor",
+    "studentId": "STU2024008",
+    "email": "ava.taylor@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/4.jpg",
+    "classId": 2
+  },
+  {
+    "id": 9,
+    "name": "Benjamin Thomas",
+    "studentId": "STU2024009",
+    "email": "benjamin.thomas@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/5.jpg",
+    "classId": 3
+  },
+  {
+    "id": 10,
+    "name": "Isabella Garcia",
+    "studentId": "STU2024010",
+    "email": "isabella.garcia@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/5.jpg",
+    "classId": 3
+  },
+  {
+    "id": 11,
+    "name": "Lucas Rodriguez",
+    "studentId": "STU2024011",
+    "email": "lucas.rodriguez@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/6.jpg",
+    "classId": 3
+  },
+  {
+    "id": 12,
+    "name": "Mia Hernandez",
+    "studentId": "STU2024012",
+    "email": "mia.hernandez@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/6.jpg",
+    "classId": 3
+  },
+  {
+    "id": 13,
+    "name": "Henry Lopez",
+    "studentId": "STU2024013",
+    "email": "henry.lopez@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/7.jpg",
+    "classId": 4
+  },
+  {
+    "id": 14,
+    "name": "Charlotte Lee",
+    "studentId": "STU2024014",
+    "email": "charlotte.lee@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/7.jpg",
+    "classId": 4
+  },
+  {
+    "id": 15,
+    "name": "Alexander White",
+    "studentId": "STU2024015",
+    "email": "alexander.white@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/8.jpg",
+    "classId": 4
+  },
+  {
+    "id": 16,
+    "name": "Amelia Harris",
+    "studentId": "STU2024016",
+    "email": "amelia.harris@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/8.jpg",
+    "classId": 4
+  },
+  {
+    "id": 17,
+    "name": "Daniel Martin",
+    "studentId": "STU2024017",
+    "email": "daniel.martin@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/9.jpg",
+    "classId": 5
+  },
+  {
+    "id": 18,
+    "name": "Harper Clark",
+    "studentId": "STU2024018",
+    "email": "harper.clark@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/9.jpg",
+    "classId": 5
+  },
+  {
+    "id": 19,
+    "name": "Matthew Lewis",
+    "studentId": "STU2024019",
+    "email": "matthew.lewis@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/10.jpg",
+    "classId": 5
+  },
+  {
+    "id": 20,
+    "name": "Evelyn Walker",
+    "studentId": "STU2024020",
+    "email": "evelyn.walker@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/10.jpg",
+    "classId": 5
+  },
+  {
+    "id": 21,
+    "name": "Jackson Hall",
+    "studentId": "STU2024021",
+    "email": "jackson.hall@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/11.jpg",
+    "classId": 1
+  },
+  {
+    "id": 22,
+    "name": "Ella Allen",
+    "studentId": "STU2024022",
+    "email": "ella.allen@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/11.jpg",
+    "classId": 2
+  },
+  {
+    "id": 23,
+    "name": "Sebastian Young",
+    "studentId": "STU2024023",
+    "email": "sebastian.young@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/12.jpg",
+    "classId": 3
+  },
+  {
+    "id": 24,
+    "name": "Scarlett King",
+    "studentId": "STU2024024",
+    "email": "scarlett.king@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/women/12.jpg",
+    "classId": 4
+  },
+  {
+    "id": 25,
+    "name": "Aiden Wright",
+    "studentId": "STU2024025",
+    "email": "aiden.wright@school.edu",
+    "profileUrl": "https://randomuser.me/api/portraits/men/13.jpg",
+    "classId": 5
+  }
+]
