@@ -14,21 +14,34 @@ class Staff {
   });
 
   factory Staff.fromJson(Map<String, dynamic> json) {
+    String readValue(List<String> keys, String fieldName) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value is String) {
+          return value;
+        }
+        if (value != null) {
+          return value.toString();
+        }
+      }
+      throw FormatException('Missing "$fieldName" in staff JSON data.');
+    }
+
     return Staff(
-      staffId: json['staffId'] as String,
-      username: json['username'] as String,
-      password: json['password'] as String,
-      fullName: json['fullName'] as String,
-      role: json['role'] as String,
+      staffId: readValue(['staffId', 'staff_id'], 'staffId'),
+      username: readValue(['username'], 'username'),
+      password: readValue(['password'], 'password'),
+      fullName: readValue(['fullName', 'full_name'], 'fullName'),
+      role: readValue(['role'], 'role'),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'staffId': staffId,
+      'staff_id': staffId,
       'username': username,
       'password': password,
-      'fullName': fullName,
+      'full_name': fullName,
       'role': role,
     };
   }

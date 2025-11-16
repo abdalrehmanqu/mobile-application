@@ -59,16 +59,66 @@ class Transaction {
 
   /// Creates a Transaction from JSON
   factory Transaction.fromJson(Map<String, dynamic> json) {
+    String readString(List<String> keys, String fieldName) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        return value.toString();
+      }
+      throw FormatException('Missing "$fieldName" in transaction JSON data.');
+    }
+
+    DateTime readDate(List<String> keys, String fieldName) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        if (value is DateTime) return value;
+        if (value is String) {
+          final parsed = DateTime.tryParse(value);
+          if (parsed != null) return parsed;
+        }
+      }
+      throw FormatException('Missing "$fieldName" in transaction JSON data.');
+    }
+
+    DateTime? readOptionalDate(List<String> keys) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        if (value is DateTime) return value;
+        if (value is String) {
+          final parsed = DateTime.tryParse(value);
+          if (parsed != null) return parsed;
+        }
+      }
+      return null;
+    }
+
+    bool readBool(List<String> keys, {bool defaultValue = false}) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        if (value is bool) return value;
+        if (value is num) return value != 0;
+        if (value is String) {
+          final normalized = value.toLowerCase();
+          if (normalized == 'true') return true;
+          if (normalized == 'false') return false;
+          final parsed = int.tryParse(value);
+          if (parsed != null) return parsed != 0;
+        }
+      }
+      return defaultValue;
+    }
+
     return Transaction(
-      id: json['id'] as String,
-      memberId: json['memberId'] as String,
-      bookId: json['bookId'] as String,
-      borrowDate: DateTime.parse(json['borrowDate'] as String),
-      dueDate: DateTime.parse(json['dueDate'] as String),
-      returnDate: json['returnDate'] != null
-          ? DateTime.parse(json['returnDate'] as String)
-          : null,
-      isReturned: json['isReturned'] as bool? ?? false,
+      id: readString(['id', 'transaction_id'], 'id'),
+      memberId: readString(['memberId', 'member_id'], 'memberId'),
+      bookId: readString(['bookId', 'book_id'], 'bookId'),
+      borrowDate: readDate(['borrowDate', 'borrow_date'], 'borrowDate'),
+      dueDate: readDate(['dueDate', 'due_date'], 'dueDate'),
+      returnDate: readOptionalDate(['returnDate', 'return_date']),
+      isReturned: readBool(['isReturned', 'is_returned', 'returned']),
     );
   }
 
@@ -76,12 +126,12 @@ class Transaction {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'memberId': memberId,
-      'bookId': bookId,
-      'borrowDate': borrowDate.toIso8601String(),
-      'dueDate': dueDate.toIso8601String(),
-      'returnDate': returnDate?.toIso8601String(),
-      'isReturned': isReturned,
+      'member_id': memberId,
+      'book_id': bookId,
+      'borrow_date': borrowDate.toIso8601String(),
+      'due_date': dueDate.toIso8601String(),
+      'return_date': returnDate?.toIso8601String(),
+      'is_returned': isReturned,
     };
   }
 

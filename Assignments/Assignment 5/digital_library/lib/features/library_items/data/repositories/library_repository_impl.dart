@@ -58,26 +58,26 @@ class LibraryRepositoryImpl implements LibraryRepository {
     return await _client
         .from('books')
         .select()
-        .eq('isAvailable', true)
+        .eq('is_available', true)
         .then((data) =>
             (data as List).map((json) => Book.fromJson(json)).toList());
   }
 
   @override
   Future<List<Book>> getItemsByAuthor(String authorId) async {
-    return await _client
-        .from('books')
-        .select()
-        .eq('authorId', authorId)
-        .then((data) =>
-            (data as List).map((json) => Book.fromJson(json)).toList());
+    final response = await _client.from('books').select();
+    final List<dynamic> data = response as List;
+    return data
+        .map((json) => Book.fromJson(json))
+        .where((book) => book.authorId == authorId)
+        .toList();
   }
 
   @override
   Future<void> updateBookAvailability(String bookId, bool isAvailable) async {
     await _client
         .from('books')
-        .update({'isAvailable': isAvailable})
+        .update({'is_available': isAvailable})
         .eq('id', bookId);
   }
 

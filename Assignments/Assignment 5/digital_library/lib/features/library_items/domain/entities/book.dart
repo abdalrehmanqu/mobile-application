@@ -2,7 +2,7 @@
 class Book {
   final String id;
   final String title;
-  final String authorId;  // Foreign key - just the ID!
+  final String authorId; // Foreign key - just the ID!
   final int publishedYear;
   final String category;
   final bool isAvailable;
@@ -28,48 +28,116 @@ class Book {
 
   String getItemType() => 'Book';
 
+  factory Book.fromJson(Map<String, dynamic> json) {
+    String readString(List<String> keys, String fieldName,
+        {String? defaultValue}) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        return value.toString();
+      }
+      if (defaultValue != null) return defaultValue;
+      throw FormatException('Missing "$fieldName" in book JSON data.');
+    }
+
+    String? readOptionalString(List<String> keys) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        return value.toString();
+      }
+      return null;
+    }
+
+    int readInt(List<String> keys, String fieldName) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        if (value is num) return value.toInt();
+        if (value is String) {
+          final parsed = int.tryParse(value);
+          if (parsed != null) return parsed;
+        }
+      }
+      throw FormatException('Missing "$fieldName" in book JSON data.');
+    }
+
+    bool readBool(List<String> keys, String fieldName,
+        {bool defaultValue = false}) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        if (value is bool) return value;
+        if (value is num) return value != 0;
+        if (value is String) {
+          final normalized = value.toLowerCase();
+          if (normalized == 'true') return true;
+          if (normalized == 'false') return false;
+          final parsed = int.tryParse(value);
+          if (parsed != null) return parsed != 0;
+        }
+      }
+      return defaultValue;
+    }
+
+    String readAuthorId() {
+      final value = readOptionalString([
+        'authorId',
+        'author_id',
+        'authorID',
+        'author',
+        'author_name',
+        'authorName',
+      ]);
+      if (value != null && value.isNotEmpty) return value;
+
+      for (final key in ['authorIds', 'author_ids']) {
+        final ids = json[key];
+        if (ids is List && ids.isNotEmpty) {
+          final first = ids.first;
+          if (first != null) return first.toString();
+        }
+      }
+
+      // Fallback to a placeholder rather than crashing the app
+      return 'unknown-author';
+    }
+
+    return Book(
+      id: readString(['id', 'book_id'], 'id'),
+      title: readString(['title'], 'title'),
+      authorId: readAuthorId(),
+      publishedYear:
+          readInt(['publishedYear', 'published_year'], 'publishedYear'),
+      category: readString(['category'], 'category'),
+      isAvailable: readBool(
+        ['isAvailable', 'is_available'],
+        'isAvailable',
+        defaultValue: true,
+      ),
+      coverImageUrl:
+          readOptionalString(['coverImageUrl', 'cover_image_url']),
+      description: readOptionalString(['description']),
+      pageCount: readInt(['pageCount', 'page_count'], 'pageCount'),
+      isbn: readString(['isbn'], 'isbn'),
+      publisher: readString(['publisher'], 'publisher'),
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'type': 'Book',
         'title': title,
-        'authorId': authorId,
-        'publishedYear': publishedYear,
+        'author_id': authorId,
+        'published_year': publishedYear,
         'category': category,
-        'isAvailable': isAvailable,
-        'coverImageUrl': coverImageUrl,
+        'is_available': isAvailable,
+        'cover_image_url': coverImageUrl,
         'description': description,
         'isbn': isbn,
-        'pageCount': pageCount,
+        'page_count': pageCount,
         'publisher': publisher,
       };
-
-  factory Book.fromJson(Map<String, dynamic> json) {
-    // Support both formats: single authorId or authorIds array
-    final String authorId;
-    if (json.containsKey('authorId')) {
-      authorId = json['authorId'] as String;
-    } else if (json.containsKey('authorIds')) {
-      // Fallback to old format: take first author from authorIds array
-      final authorIds = (json['authorIds'] as List).cast<String>();
-      authorId = authorIds.isNotEmpty ? authorIds.first : '';
-    } else {
-      authorId = '';
-    }
-
-    return Book(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      authorId: authorId,
-      publishedYear: json['publishedYear'] as int,
-      category: json['category'] as String,
-      isAvailable: json['isAvailable'] as bool,
-      coverImageUrl: json['coverImageUrl'] as String?,
-      description: json['description'] as String?,
-      isbn: json['isbn'] as String,
-      pageCount: json['pageCount'] as int,
-      publisher: json['publisher'] as String,
-    );
-  }
 
   Book copyWith({
     String? id,

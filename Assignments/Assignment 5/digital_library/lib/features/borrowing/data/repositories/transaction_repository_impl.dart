@@ -9,7 +9,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   /// Load transactions from JSON file
   Future<List<Transaction>> _loadTransactions() async {
     try {
-      final response = await _client.from('transactions').select();
+      final response = await _client.from('borrowtransactions').select();
       final List<dynamic> data = response as List;
       return data.map((json) => Transaction.fromJson(json)).toList();
     } catch (e) {
@@ -25,7 +25,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<Transaction> getTransaction(String transactionId) async {
     return await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .select()
         .eq("id", transactionId)
         .single()
@@ -35,7 +35,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<List<Transaction>> getTransactionsByMember(String memberId) async {
     return await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .select()
         .eq("member_id", memberId)
         .then((data) =>
@@ -45,7 +45,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<List<Transaction>> getTransactionsByBook(String bookId) async {
     return await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .select()
         .eq("book_id", bookId)
         .then((data) =>
@@ -55,9 +55,9 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<List<Transaction>> getActiveTransactions() async {
     return await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .select()
-        .eq("returned", false)
+        .eq("is_returned", false)
         .then((data) =>
             (data as List).map((json) => Transaction.fromJson(json)).toList());
   }
@@ -66,23 +66,23 @@ class TransactionRepositoryImpl implements TransactionRepository {
   Future<List<Transaction>> getOverdueTransactions() async {
     final now = DateTime.now().toIso8601String();
     return await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .select()
         .lt("due_date", now)
-        .eq("returned", false)
+        .eq("is_returned", false)
         .then((data) =>
             (data as List).map((json) => Transaction.fromJson(json)).toList());
   }
 
   @override
   Future<void> addTransaction(Transaction transaction) async {
-    await _client.from('transactions').insert(transaction.toJson());
+    await _client.from('borrowtransactions').insert(transaction.toJson());
   }
 
   @override
   Future<void> updateTransaction(Transaction transaction) async {
     await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .update(transaction.toJson())
         .eq('id', transaction.id);
   }
@@ -90,7 +90,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<void> deleteTransaction(String transactionId) async {
     await _client
-        .from('transactions')
+        .from('borrowtransactions')
         .delete()
         .eq('id', transactionId);
   }
