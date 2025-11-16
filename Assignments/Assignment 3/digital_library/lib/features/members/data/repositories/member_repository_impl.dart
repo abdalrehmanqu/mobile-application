@@ -5,7 +5,7 @@ import '../../domain/entities/member.dart';
 class MemberRepositoryImpl implements MemberRepository {
   final MemberDao _memberDao;
   MemberRepositoryImpl(this._memberDao);
-  
+
   /// Load members from JSON file
   Future<List<Member>> _loadMembers() => _memberDao.findAllMembers();
 
@@ -13,7 +13,8 @@ class MemberRepositoryImpl implements MemberRepository {
   Future<List<Member>> getAllMembers() => _loadMembers();
 
   @override
-  Future<Member> getMember(String memberId) => _memberDao.findMemberById(memberId).then((member) {
+  Future<Member> getMember(String memberId) =>
+      _memberDao.findMemberById(memberId).then((member) {
         if (member == null) {
           throw Exception('Member with ID $memberId not found');
         }
@@ -27,8 +28,11 @@ class MemberRepositoryImpl implements MemberRepository {
   Future<void> updateMember(Member member) => _memberDao.updateMember(member);
 
   @override
-  Future<List<Member>> searchMembers(String query) => _loadMembers().then((members) =>
-      members.where((m) => m.name.toLowerCase().contains(query.toLowerCase())).toList());
+  Future<List<Member>> searchMembers(String query) => _loadMembers().then(
+    (members) => members
+        .where((m) => m.name.toLowerCase().contains(query.toLowerCase()))
+        .toList(),
+  );
 
   // ==================== Stream methods (convert Future to Stream) ====================
 
@@ -60,11 +64,11 @@ class MemberRepositoryImpl implements MemberRepository {
   // ==================== Additional CRUD ====================
 
   @override
-  Future<void> deleteMember(String memberId) => _memberDao.findMemberById(memberId).then((member) {
+  Future<void> deleteMember(String memberId) =>
+      _memberDao.findMemberById(memberId).then((member) {
         if (member == null) {
           throw Exception('Member with ID $memberId not found');
         }
         return _memberDao.deleteMember(member);
       });
-
 }

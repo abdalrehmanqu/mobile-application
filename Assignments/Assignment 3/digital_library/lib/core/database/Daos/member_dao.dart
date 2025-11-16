@@ -1,11 +1,11 @@
 import 'package:digital_library/features/members/domain/entities/member.dart';
 import 'package:floor/floor.dart';
 
-@dao 
+@dao
 abstract class MemberDao {
-  @Query('SELECT * FROM Member WHERE memberId = :memberId')
+  @Query('SELECT * FROM Member WHERE id = :memberId')
   Future<Member?> findMemberById(String memberId);
-  
+
   @Query('SELECT * FROM Member')
   Future<List<Member>> findAllMembers();
 
@@ -24,6 +24,6 @@ abstract class MemberDao {
   @Query('SELECT * FROM Member')
   Stream<List<Member>> watchAllMembers();
 
-  @insert 
+  @insert
   Future<void> insertMembers(List<Member> members);
 }

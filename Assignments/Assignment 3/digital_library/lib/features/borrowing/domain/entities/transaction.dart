@@ -1,4 +1,3 @@
-// TODO: Add Floor annotations when implementing database
 import 'package:digital_library/features/library_items/domain/entities/book.dart';
 import 'package:digital_library/features/members/domain/entities/member.dart';
 import 'package:floor/floor.dart';

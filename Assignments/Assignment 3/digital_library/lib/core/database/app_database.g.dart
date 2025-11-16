@@ -88,7 +88,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 1,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -208,7 +208,7 @@ class _$MemberDao extends MemberDao {
 
   @override
   Future<Member?> findMemberById(String memberId) async {
-    return _queryAdapter.query('SELECT * FROM Member WHERE memberId = ?1',
+    return _queryAdapter.query('SELECT * FROM Member WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Member(
             id: row['id'] as String,
             name: row['name'] as String,
