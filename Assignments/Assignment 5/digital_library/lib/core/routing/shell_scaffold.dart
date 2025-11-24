@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShellScaffold extends StatelessWidget {
   final Widget child;
@@ -50,9 +51,12 @@ class ShellScaffold extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
-              context.go('/login');
+              await Supabase.instance.client.auth.signOut();
+              if (context.mounted) {
+                context.go('/login');
+              }
             },
             child: const Text('Logout'),
           ),

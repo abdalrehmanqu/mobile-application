@@ -135,8 +135,7 @@ class TransactionsNotifier extends AsyncNotifier<TransactionsState> {
       }
 
       // Generate new transaction ID
-      final transactions = await _transactionRepo.getAllTransactions();
-      final newId = 'T${(transactions.length + 1).toString().padLeft(3, '0')}';
+      final newId = 'T${DateTime.now().millisecondsSinceEpoch}';
 
       // Calculate due date based on member type
       final borrowPeriod = member.getBorrowPeriod();

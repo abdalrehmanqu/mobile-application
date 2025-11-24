@@ -36,15 +36,14 @@ class _LibraryItemsScreenState extends ConsumerState<LibraryItemsScreen> {
           authors: authors,
           onSave: (book) async {
             final success = await ref.read(libraryItemsProvider.notifier).addItem(book);
-            if (mounted) {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(success ? 'Book added successfully' : 'Failed to add book'),
-                  backgroundColor: success ? Colors.green : Colors.red,
-                ),
-              );
-            }
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(success ? 'Book added successfully' : 'Failed to add book'),
+                backgroundColor: success ? Colors.green : Colors.red,
+              ),
+            );
           },
         ),
       );
@@ -61,15 +60,14 @@ class _LibraryItemsScreenState extends ConsumerState<LibraryItemsScreen> {
           authors: authors,
           onSave: (updatedBook) async {
             final success = await ref.read(libraryItemsProvider.notifier).updateItem(updatedBook);
-            if (mounted) {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(success ? 'Book updated successfully' : 'Failed to update book'),
-                  backgroundColor: success ? Colors.green : Colors.red,
-                ),
-              );
-            }
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(success ? 'Book updated successfully' : 'Failed to update book'),
+                backgroundColor: success ? Colors.green : Colors.red,
+              ),
+            );
           },
         ),
       );
@@ -90,15 +88,14 @@ class _LibraryItemsScreenState extends ConsumerState<LibraryItemsScreen> {
           TextButton(
             onPressed: () async {
               final success = await ref.read(libraryItemsProvider.notifier).deleteItem(book.id);
-              if (mounted) {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(success ? 'Book deleted successfully' : 'Failed to delete book'),
-                    backgroundColor: success ? Colors.green : Colors.red,
-                  ),
-                );
-              }
+              if (!context.mounted) return;
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(success ? 'Book deleted successfully' : 'Failed to delete book'),
+                  backgroundColor: success ? Colors.green : Colors.red,
+                ),
+              );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
@@ -449,7 +446,7 @@ class _BookFormDialogState extends State<BookFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _selectedAuthorId,
+                  initialValue: _selectedAuthorId,
                   decoration: const InputDecoration(
                     labelText: 'Author *',
                     border: OutlineInputBorder(),

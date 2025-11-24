@@ -106,13 +106,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       TextFormField(
                         controller: _usernameController,
                         decoration: const InputDecoration(
-                          labelText: 'Username',
-                          prefixIcon: Icon(Icons.person),
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your username';
+                            return 'Please enter your email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
                           }
                           return null;
                         },
@@ -157,6 +160,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      ref.watch(authProvider).maybeWhen(
+                            data: (state) => state.errorMessage != null
+                                ? Text(
+                                    state.errorMessage!,
+                                    style: const TextStyle(color: Colors.red),
+                                  )
+                                : const SizedBox.shrink(),
+                            orElse: () => const SizedBox.shrink(),
+                          ),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -170,27 +183,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             child: const Text('Sign Up'),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Demo Credentials',
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text('Username: admin'),
-                            const Text('Password: admin123'),
-                          ],
-                        ),
                       ),
                     ],
                   ),

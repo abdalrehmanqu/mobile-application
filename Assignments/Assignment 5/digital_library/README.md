@@ -153,3 +153,11 @@ your-repo/
 ---
 
 *CMPS312 Mobile Application Development - Qatar University*
+
+## Running with Supabase
+
+1. Copy `.env.example` to `.env` and paste your Supabase project URL and anon key.  
+2. Create tables/policies using `schema.sql` in your Supabase SQL editor.  
+3. Seed sample data for authors, books, members, transactions, and staff.  
+4. Run `flutter pub get` then `flutter run`.  
+5. Auth: sign up with email/password (creates staff profile) and login; routes are protected via Supabase session state.  

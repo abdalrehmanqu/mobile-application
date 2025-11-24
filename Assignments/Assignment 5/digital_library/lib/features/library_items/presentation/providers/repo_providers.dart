@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/repositories/author_repository_impl.dart';
-import '../../data/repositories/library_repository_impl.dart';
+import '../../../../core/supabase/supabase_client_provider.dart';
+import '../../data/repositories/author_repository_supabase.dart';
+import '../../data/repositories/library_repository_supabase.dart';
 import '../../domain/contracts/author_repository.dart';
 import '../../domain/contracts/library_repository.dart';
 
@@ -8,12 +9,14 @@ import '../../domain/contracts/library_repository.dart';
 /// Provides access to the library items repository
 /// Uses FutureProvider to support async initialization (for future database integration)
 final libraryRepoProvider = FutureProvider<LibraryRepository>((ref) async {
-  return LibraryRepositoryImpl();
+  final client = ref.read(supabaseClientProvider);
+  return LibraryRepositorySupabase(client);
 });
 
 /// Author Repository Provider
 /// Provides access to the authors repository
 /// Uses FutureProvider to support async initialization (for future database integration)
 final authorRepositoryProvider = FutureProvider<AuthorRepository>((ref) async {
-  return AuthorRepositoryImpl();
+  final client = ref.read(supabaseClientProvider);
+  return AuthorRepositorySupabase(client);
 });

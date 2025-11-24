@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -37,21 +38,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    // TODO: Implement Supabase signup
-    // final supabase = Supabase.instance.client;
-    // final response = await supabase.auth.signUp(
-    //   email: email,
-    //   password: password,
-    //   data: {'full_name': fullName},
-    // );
-
-    await Future.delayed(const Duration(seconds: 1)); // Simulated delay
+    final authNotifier = ref.read(authProvider.notifier);
+    final error = await authNotifier.signUp(
+      email: email,
+      password: password,
+      fullName: fullName,
+    );
 
     if (!mounted) return;
 
     setState(() => _isLoading = false);
 
-    // Show success message and navigate to login
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Account created successfully! Please login.'),

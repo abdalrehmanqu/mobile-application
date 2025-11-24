@@ -366,7 +366,7 @@ class LibraryItemDetailsScreen extends ConsumerWidget {
                       Text('Select member to borrow "${book.title}":'),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
-                        value: selectedMemberId,
+                        initialValue: selectedMemberId,
                         decoration: const InputDecoration(
                           labelText: 'Member',
                           border: OutlineInputBorder(),

@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/borrowing/presentation/screens/home_screen.dart';
@@ -9,82 +12,116 @@ import '../../features/members/presentation/screens/members_screen.dart';
 import '../../features/members/presentation/screens/member_details_screen.dart';
 import 'shell_scaffold.dart';
 
-final router = GoRouter(
-  initialLocation: '/login',
-  routes: [
-    // Login route (outside shell - no bottom nav)
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
+/// Minimal refresh listenable for GoRouter driven by a stream.
+class GoRouterRefreshStream extends ChangeNotifier {
+  late final StreamSubscription<dynamic> _subscription;
+
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    _subscription = stream.listen((_) => notifyListeners());
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
+GoRouter createRouter(SupabaseClient client) {
+  return GoRouter(
+    initialLocation: '/home',
+    refreshListenable: GoRouterRefreshStream(
+      client.auth.onAuthStateChange,
     ),
+    redirect: (context, state) {
+      final session = client.auth.currentSession;
+      final isAuthRoute = state.matchedLocation == '/login' || state.matchedLocation == '/signup';
 
-    // Signup route (outside shell - no bottom nav)
-    GoRoute(
-      path: '/signup',
-      builder: (context, state) => const SignupScreen(),
-    ),
+      if (session == null && !isAuthRoute) {
+        return '/login';
+      }
 
-    // Shell route with bottom navigation
-    ShellRoute(
-      builder: (context, state, child) {
-        // Calculate current index based on the route path
-        int currentIndex = 0;
-        final location = state.matchedLocation;
-        if (location.startsWith('/library-items')) {
-          currentIndex = 1;
-        } else if (location.startsWith('/members')) {
-          currentIndex = 2;
-        } else if (location.startsWith('/transactions')) {
-          currentIndex = 3;
-        }
+      if (session != null && isAuthRoute) {
+        return '/home';
+      }
 
-        return ShellScaffold(
-          currentIndex: currentIndex,
-          child: child,
-        );
-      },
-      routes: [
-        // Home tab
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
-        ),
+      return null;
+    },
+    routes: [
+      // Login route (outside shell - no bottom nav)
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
 
-        // Library items tab
-        GoRoute(
-          path: '/library-items',
-          builder: (context, state) => const LibraryItemsScreen(),
-        ),
+      // Signup route (outside shell - no bottom nav)
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
 
-        // Members tab
-        GoRoute(
-          path: '/members',
-          builder: (context, state) => const MembersScreen(),
-        ),
+      // Shell route with bottom navigation
+      ShellRoute(
+        builder: (context, state, child) {
+          // Calculate current index based on the route path
+          int currentIndex = 0;
+          final location = state.matchedLocation;
+          if (location.startsWith('/library-items')) {
+            currentIndex = 1;
+          } else if (location.startsWith('/members')) {
+            currentIndex = 2;
+          } else if (location.startsWith('/transactions')) {
+            currentIndex = 3;
+          }
 
-        // Transactions tab
-        GoRoute(
-          path: '/transactions',
-          builder: (context, state) => const TransactionsScreen(),
-        ),
-      ],
-    ),
+          return ShellScaffold(
+            currentIndex: currentIndex,
+            child: child,
+          );
+        },
+        routes: [
+          // Home tab
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
+          ),
 
-    // Detail routes (outside shell - no bottom nav)
-    GoRoute(
-      path: '/library-items/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return LibraryItemDetailsScreen(itemId: id);
-      },
-    ),
+          // Library items tab
+          GoRoute(
+            path: '/library-items',
+            builder: (context, state) => const LibraryItemsScreen(),
+          ),
 
-    GoRoute(
-      path: '/members/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return MemberDetailsScreen(memberId: id);
-      },
-    ),
-  ],
-);
+          // Members tab
+          GoRoute(
+            path: '/members',
+            builder: (context, state) => const MembersScreen(),
+          ),
+
+          // Transactions tab
+          GoRoute(
+            path: '/transactions',
+            builder: (context, state) => const TransactionsScreen(),
+          ),
+        ],
+      ),
+
+      // Detail routes (outside shell - no bottom nav)
+      GoRoute(
+        path: '/library-items/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return LibraryItemDetailsScreen(itemId: id);
+        },
+      ),
+
+      GoRoute(
+        path: '/members/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return MemberDetailsScreen(memberId: id);
+        },
+      ),
+    ],
+  );
+}
