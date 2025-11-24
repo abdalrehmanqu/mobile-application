@@ -1,18 +1,21 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import '../../domain/contracts/author_repository.dart';
 import '../../domain/entities/author.dart';
 
 class AuthorRepositoryImpl implements AuthorRepository {
-  final SupabaseClient _client;
-  AuthorRepositoryImpl(this._client);
+  List<Author>? _authors;
 
   /// Load authors from JSON file
   Future<List<Author>> _loadAuthors() async {
-     try {
-      final response = await _client.from('authors').select();
+    if (_authors != null) return _authors!;
 
-      final List<dynamic> data = response as List;
-      return data.map((json) => Author.fromJson(json)).toList();
+    try {
+      final String authorsJson =
+          await rootBundle.loadString('assets/data/authors_json.json');
+      final List<dynamic> authorsData = json.decode(authorsJson);
+      _authors = authorsData.map((json) => Author.fromJson(json)).toList();
+      return _authors!;
     } catch (e) {
       throw Exception('Failed to load authors: $e');
     }
@@ -25,22 +28,27 @@ class AuthorRepositoryImpl implements AuthorRepository {
 
   @override
   Future<Author> getAuthor(String id) async {
-    return await _client
-        .from('authors')
-        .select()
-        .eq("id", id)
-        .single()
-        .then((json) => Author.fromJson(json));
+    final authors = await _loadAuthors();
+    try {
+      return authors.firstWhere((author) => author.id == id);
+    } catch (e) {
+      throw Exception('Author with ID $id not found');
+    }
   }
 
   @override
   Future<List<Author>> searchAuthors(String query) async {
-    return await _client
-        .from('authors')
-        .select()
-        .ilike('name', '%$query%')
-        .then((data) =>
-            (data as List).map((json) => Author.fromJson(json)).toList());
+    final authors = await _loadAuthors();
+    final lowerQuery = query.toLowerCase();
+
+    return authors.where((author) {
+      if (author.name.toLowerCase().contains(lowerQuery)) return true;
+      if (author.biography != null &&
+          author.biography!.toLowerCase().contains(lowerQuery)) {
+        return true;
+      }
+      return false;
+    }).toList();
   }
 
   // ==================== Stream methods (convert Future to Stream) ====================
@@ -68,17 +76,35 @@ class AuthorRepositoryImpl implements AuthorRepository {
 
   @override
   Future<void> addAuthor(Author author) async {
-    await _client.from('authors').insert(author.toJson());
+    final authors = await _loadAuthors();
+    if (authors.any((a) => a.id == author.id)) {
+      throw Exception('Author with ID ${author.id} already exists');
+    }
+    _authors!.add(author);
   }
 
   @override
   Future<void> updateAuthor(Author author) async {
-    await _client.from('authors').update(author.toJson()).eq('id', author.id);
+    final authors = await _loadAuthors();
+    final index = authors.indexWhere((a) => a.id == author.id);
+    if (index == -1) {
+      throw Exception('Author with ID ${author.id} not found');
+    }
+    _authors![index] = author;
   }
 
   @override
   Future<void> deleteAuthor(String id) async {
-    await _client.from('authors').delete().eq('id', id);
+    final authors = await _loadAuthors();
+    final index = authors.indexWhere((a) => a.id == id);
+    if (index == -1) {
+      throw Exception('Author with ID $id not found');
+    }
+    _authors!.removeAt(index);
   }
 
+  /// Clear cache (useful for testing or refresh)
+  void clearCache() {
+    _authors = null;
+  }
 }

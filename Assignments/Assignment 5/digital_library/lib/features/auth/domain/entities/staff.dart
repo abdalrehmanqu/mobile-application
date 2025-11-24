@@ -13,29 +13,18 @@ class Staff {
     required this.role,
   });
 
+  /// Create Staff from JSON (supports both camelCase and snake_case)
   factory Staff.fromJson(Map<String, dynamic> json) {
-    String readValue(List<String> keys, String fieldName) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value is String) {
-          return value;
-        }
-        if (value != null) {
-          return value.toString();
-        }
-      }
-      throw FormatException('Missing "$fieldName" in staff JSON data.');
-    }
-
     return Staff(
-      staffId: readValue(['staffId', 'staff_id'], 'staffId'),
-      username: readValue(['username'], 'username'),
-      password: readValue(['password'], 'password'),
-      fullName: readValue(['fullName', 'full_name'], 'fullName'),
-      role: readValue(['role'], 'role'),
+      staffId: json['staffId'] ?? json['staff_id'] as String,
+      username: json['username'] as String,
+      password: json['password'] as String,
+      fullName: json['fullName'] ?? json['full_name'] as String,
+      role: json['role'] as String,
     );
   }
 
+  /// Convert Staff to JSON (snake_case for Supabase)
   Map<String, dynamic> toJson() {
     return {
       'staff_id': staffId,

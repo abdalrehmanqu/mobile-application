@@ -1,18 +1,26 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import '../../domain/contracts/member_repository.dart';
 import '../../domain/entities/member.dart';
 
 class MemberRepositoryImpl implements MemberRepository {
-  final SupabaseClient _client;
-  MemberRepositoryImpl(this._client);
+  List<Member>? members;
 
   /// Load members from JSON file
   Future<List<Member>> _loadMembers() async {
-    try {
-      final response = await _client.from('members').select();
+    if (members != null) return members!;
 
-      final List<dynamic> data = response as List;
-      return data.map((json) => Member.fromJson(json)).toList();
+    try {
+      final String membersJson =
+          await rootBundle.loadString('assets/data/members_json.json');
+      final List<dynamic> membersData = json.decode(membersJson);
+
+      // Create Member entities (supports both students and faculty)
+      members = membersData
+          .map((memberJson) => Member.fromJson(memberJson))
+          .toList();
+
+      return members!;
     } catch (e) {
       throw Exception('Failed to load members: $e');
     }
@@ -25,37 +33,58 @@ class MemberRepositoryImpl implements MemberRepository {
 
   @override
   Future<Member> getMember(String memberId) async {
-    return await _client
-        .from('members')
-        .select()
-        .eq("id", memberId)
-        .single()
-        .then((json) => Member.fromJson(json));
+    final members = await _loadMembers();
+    try {
+      return members.firstWhere((member) => member.id == memberId);
+    } catch (e) {
+      throw Exception('Member with ID $memberId not found');
+    }
   }
 
   @override
   Future<void> addMember(Member member) async {
-    await _client.from('members').insert(member.toJson());
+    final members = await _loadMembers();
+
+    // Validate unique ID
+    if (members.any((m) => m.id == member.id)) {
+      throw Exception('Member with ID ${member.id} already exists');
+    }
+
+    // Validate unique email
+    if (members.any((m) => m.email == member.email)) {
+      throw Exception('Member with email ${member.email} already exists');
+    }
+
+    members.add(member);
   }
 
   @override
   Future<void> updateMember(Member member) async {
-    await _client
-        .from('members')
-        .update(member.toJson())
-        .eq("id", member.id);
+    final members = await _loadMembers();
+    final index =
+        members.indexWhere((m) => m.id == member.id);
+
+    if (index == -1) {
+      throw Exception('Member with ID ${member.id} not found');
+    }
+
+    members[index] = member;
   }
 
   @override
   Future<List<Member>> searchMembers(String query) async {
-    return await _client
-        .from('members')
-        .select()
-        .ilike('name', '%$query%')
-        .then((response) {
-      final List<dynamic> data = response as List;
-      return data.map((json) => Member.fromJson(json)).toList();
-    });
+    final members = await _loadMembers();
+    final lowerQuery = query.toLowerCase();
+
+    return members.where((member) {
+      // Search in name
+      if (member.name.toLowerCase().contains(lowerQuery)) return true;
+
+      // Search in email
+      if (member.email.toLowerCase().contains(lowerQuery)) return true;
+
+      return false;
+    }).toList();
   }
 
   // ==================== Stream methods (convert Future to Stream) ====================
@@ -89,7 +118,18 @@ class MemberRepositoryImpl implements MemberRepository {
 
   @override
   Future<void> deleteMember(String memberId) async {
-    await _client.from('members').delete().eq("id", memberId);
+    final members = await _loadMembers();
+    final index = members.indexWhere((m) => m.id == memberId);
+
+    if (index == -1) {
+      throw Exception('Member with ID $memberId not found');
+    }
+
+    members.removeAt(index);
   }
 
+  /// Clear cache (useful for testing or refresh)
+  void clearCache() {
+    members = null;
+  }
 }

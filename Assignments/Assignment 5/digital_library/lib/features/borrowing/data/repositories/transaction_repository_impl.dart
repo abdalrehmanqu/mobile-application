@@ -1,19 +1,29 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import '../../domain/contracts/transaction_repository.dart';
 import '../../domain/entities/transaction.dart';
 
 class TransactionRepositoryImpl implements TransactionRepository {
-  final SupabaseClient _client;
-  TransactionRepositoryImpl(this._client);
+  List<Transaction>? _transactions;
 
   /// Load transactions from JSON file
   Future<List<Transaction>> _loadTransactions() async {
+    if (_transactions != null) return _transactions!;
+
     try {
-      final response = await _client.from('borrowtransactions').select();
-      final List<dynamic> data = response as List;
-      return data.map((json) => Transaction.fromJson(json)).toList();
+      final String transactionsJson =
+          await rootBundle.loadString('assets/data/transactions.json');
+      final List<dynamic> transactionsData = json.decode(transactionsJson);
+
+      _transactions = transactionsData
+          .map((transactionJson) => Transaction.fromJson(transactionJson))
+          .toList();
+
+      return _transactions!;
     } catch (e) {
-      throw Exception('Failed to load transactions: $e');
+      // If file doesn't exist, start with empty list
+      _transactions = [];
+      return _transactions!;
     }
   }
 
@@ -24,75 +34,72 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
   @override
   Future<Transaction> getTransaction(String transactionId) async {
-    return await _client
-        .from('borrowtransactions')
-        .select()
-        .eq("id", transactionId)
-        .single()
-        .then((json) => Transaction.fromJson(json));
+    final transactions = await _loadTransactions();
+    try {
+      return transactions.firstWhere((t) => t.id == transactionId);
+    } catch (e) {
+      throw Exception('Transaction with ID $transactionId not found');
+    }
   }
 
   @override
   Future<List<Transaction>> getTransactionsByMember(String memberId) async {
-    return await _client
-        .from('borrowtransactions')
-        .select()
-        .eq("member_id", memberId)
-        .then((data) =>
-            (data as List).map((json) => Transaction.fromJson(json)).toList());
+    final transactions = await _loadTransactions();
+    return transactions.where((t) => t.memberId == memberId).toList();
   }
 
   @override
   Future<List<Transaction>> getTransactionsByBook(String bookId) async {
-    return await _client
-        .from('borrowtransactions')
-        .select()
-        .eq("book_id", bookId)
-        .then((data) =>
-            (data as List).map((json) => Transaction.fromJson(json)).toList());
+    final transactions = await _loadTransactions();
+    return transactions.where((t) => t.bookId == bookId).toList();
   }
 
   @override
   Future<List<Transaction>> getActiveTransactions() async {
-    return await _client
-        .from('borrowtransactions')
-        .select()
-        .eq("is_returned", false)
-        .then((data) =>
-            (data as List).map((json) => Transaction.fromJson(json)).toList());
+    final transactions = await _loadTransactions();
+    return transactions.where((t) => !t.isReturned).toList();
   }
 
   @override
   Future<List<Transaction>> getOverdueTransactions() async {
-    final now = DateTime.now().toIso8601String();
-    return await _client
-        .from('borrowtransactions')
-        .select()
-        .lt("due_date", now)
-        .eq("is_returned", false)
-        .then((data) =>
-            (data as List).map((json) => Transaction.fromJson(json)).toList());
+    final transactions = await _loadTransactions();
+    return transactions.where((t) => t.isOverdue()).toList();
   }
 
   @override
   Future<void> addTransaction(Transaction transaction) async {
-    await _client.from('borrowtransactions').insert(transaction.toJson());
+    final transactions = await _loadTransactions();
+
+    // Validate unique ID
+    if (transactions.any((t) => t.id == transaction.id)) {
+      throw Exception('Transaction with ID ${transaction.id} already exists');
+    }
+
+    _transactions!.add(transaction);
   }
 
   @override
   Future<void> updateTransaction(Transaction transaction) async {
-    await _client
-        .from('borrowtransactions')
-        .update(transaction.toJson())
-        .eq('id', transaction.id);
+    final transactions = await _loadTransactions();
+    final index = transactions.indexWhere((t) => t.id == transaction.id);
+
+    if (index == -1) {
+      throw Exception('Transaction with ID ${transaction.id} not found');
+    }
+
+    _transactions![index] = transaction;
   }
 
   @override
   Future<void> deleteTransaction(String transactionId) async {
-    await _client
-        .from('borrowtransactions')
-        .delete()
-        .eq('id', transactionId);
+    final transactions = await _loadTransactions();
+    final index = transactions.indexWhere((t) => t.id == transactionId);
+
+    if (index == -1) {
+      throw Exception('Transaction with ID $transactionId not found');
+    }
+
+    _transactions!.removeAt(index);
   }
 
   // ==================== Stream methods (convert Future to Stream) ====================
@@ -131,4 +138,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
     yield await getOverdueTransactions();
   }
 
+  /// Clear cache (useful for testing or refresh)
+  void clearCache() {
+    _transactions = null;
+  }
 }

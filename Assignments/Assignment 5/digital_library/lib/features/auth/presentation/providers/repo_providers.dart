@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/contracts/auth_repository.dart';
 
@@ -7,5 +6,5 @@ import '../../domain/contracts/auth_repository.dart';
 /// Provides access to the authentication repository
 /// Uses FutureProvider to support async initialization (for future database integration)
 final authRepoProvider = FutureProvider<AuthRepository>((ref) async {
-  return AuthRepositoryImpl(Supabase.instance.client);
+  return AuthRepositoryImpl();
 });

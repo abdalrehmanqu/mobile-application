@@ -1,9 +1,5 @@
-// TODO: Add Floor annotations when implementing database
-// @entity
 class Transaction {
-  // @primaryKey
   final String id;
-
   final String memberId;
   final String bookId;
   final DateTime borrowDate;
@@ -33,8 +29,7 @@ class Transaction {
     return DateTime.now().difference(dueDate).inDays;
   }
 
-  /// Computes fee based on overdue days
-  /// QR 2 per day late fee
+  /// Computes fee based on overdue days - QR 2 per day late fee
   double calculateLateFee() {
     final daysOverdue = getDaysOverdue();
     return daysOverdue * 2.0;
@@ -57,72 +52,27 @@ class Transaction {
     isReturned = true;
   }
 
-  /// Creates a Transaction from JSON
+  /// Creates a Transaction from JSON (supports both camelCase and snake_case)
   factory Transaction.fromJson(Map<String, dynamic> json) {
-    String readString(List<String> keys, String fieldName) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        return value.toString();
-      }
-      throw FormatException('Missing "$fieldName" in transaction JSON data.');
-    }
-
-    DateTime readDate(List<String> keys, String fieldName) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        if (value is DateTime) return value;
-        if (value is String) {
-          final parsed = DateTime.tryParse(value);
-          if (parsed != null) return parsed;
-        }
-      }
-      throw FormatException('Missing "$fieldName" in transaction JSON data.');
-    }
-
-    DateTime? readOptionalDate(List<String> keys) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        if (value is DateTime) return value;
-        if (value is String) {
-          final parsed = DateTime.tryParse(value);
-          if (parsed != null) return parsed;
-        }
-      }
-      return null;
-    }
-
-    bool readBool(List<String> keys, {bool defaultValue = false}) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        if (value is bool) return value;
-        if (value is num) return value != 0;
-        if (value is String) {
-          final normalized = value.toLowerCase();
-          if (normalized == 'true') return true;
-          if (normalized == 'false') return false;
-          final parsed = int.tryParse(value);
-          if (parsed != null) return parsed != 0;
-        }
-      }
-      return defaultValue;
-    }
+    // Parse dates from various formats
+    final borrowDateStr = json['borrowDate'] ?? json['borrow_date'];
+    final dueDateStr = json['dueDate'] ?? json['due_date'];
+    final returnDateStr = json['returnDate'] ?? json['return_date'];
 
     return Transaction(
-      id: readString(['id', 'transaction_id'], 'id'),
-      memberId: readString(['memberId', 'member_id'], 'memberId'),
-      bookId: readString(['bookId', 'book_id'], 'bookId'),
-      borrowDate: readDate(['borrowDate', 'borrow_date'], 'borrowDate'),
-      dueDate: readDate(['dueDate', 'due_date'], 'dueDate'),
-      returnDate: readOptionalDate(['returnDate', 'return_date']),
-      isReturned: readBool(['isReturned', 'is_returned', 'returned']),
+      id: json['id'] as String,
+      memberId: json['memberId'] ?? json['member_id'] as String,
+      bookId: json['bookId'] ?? json['book_id'] as String,
+      borrowDate: DateTime.parse(borrowDateStr as String),
+      dueDate: DateTime.parse(dueDateStr as String),
+      returnDate: returnDateStr != null
+          ? DateTime.parse(returnDateStr as String)
+          : null,
+      isReturned: json['isReturned'] ?? json['is_returned'] as bool? ?? false,
     );
   }
 
-  /// Converts Transaction to JSON
+  /// Converts Transaction to JSON (snake_case for Supabase)
   Map<String, dynamic> toJson() {
     return {
       'id': id,

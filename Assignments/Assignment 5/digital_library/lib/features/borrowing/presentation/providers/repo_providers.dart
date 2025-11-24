@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/repositories/transaction_repository_impl.dart';
 import '../../domain/contracts/transaction_repository.dart';
 
@@ -7,5 +6,5 @@ import '../../domain/contracts/transaction_repository.dart';
 /// Provides access to the transaction repository
 /// Uses FutureProvider to support async initialization (for future database integration)
 final transactionRepoProvider = FutureProvider<TransactionRepository>((ref) async {
-  return TransactionRepositoryImpl(Supabase.instance.client);
+  return TransactionRepositoryImpl();
 });

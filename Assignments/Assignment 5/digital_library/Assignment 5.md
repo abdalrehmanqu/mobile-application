@@ -1,4 +1,3 @@
-
 # Assignment 5: Digital Library - Supabase Integration
 
 **Due Date:** 29 Nov 2025
@@ -125,11 +124,11 @@ your-repo/
 
 | Component                       | Points        | Requirements                                                         |
 | ------------------------------- | ------------- | -------------------------------------------------------------------- |
-| **Database Setup**        | 20            | Tables created correctly, RLS enabled, data seeded                   |
-| **Authentication**        | 20            | Sign up, login, logout, session persistence, protected routes        |
-| **App Functionality**     | 45            | All features work as in the JSON app (CRUD, search, filter, streams) |
-| **Testing Documentation** | 15            | Screenshots demonstrating all features work                          |
-| **TOTAL**                 | **100** |                                                                      |
+| **Database Setup**              | 20            | Tables created correctly, RLS enabled, data seeded                   |
+| **Authentication**              | 20            | Sign up, login, logout, session persistence, protected routes        |
+| **App Functionality**           | 45            | All features work as in the JSON app (CRUD, search, filter, streams) |
+| **Testing Documentation**       | 15            | Screenshots demonstrating all features work                          |
+| **TOTAL**                       | **100**       |                                                                      |
 
 ### Grading Criteria
 

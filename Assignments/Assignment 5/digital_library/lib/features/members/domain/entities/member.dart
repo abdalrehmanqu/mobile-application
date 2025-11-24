@@ -1,4 +1,4 @@
-// Flat entity - no borrowedItems list, that's in transactions table
+/// Flat entity - no borrowedItems list, that's in transactions table
 class Member {
   final String id;
   final String name;
@@ -27,61 +27,23 @@ class Member {
   /// Get borrow period in days based on member type
   int getBorrowPeriod() => memberType == 'student' ? 14 : 30;
 
+  /// Create Member from JSON (supports both camelCase and snake_case)
   factory Member.fromJson(Map<String, dynamic> json) {
-    String readString(List<String> keys, String fieldName,
-        {String? defaultValue}) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        return value.toString();
-      }
-      if (defaultValue != null) return defaultValue;
-      throw FormatException('Missing "$fieldName" in member JSON data.');
-    }
-
-    String? readOptionalString(List<String> keys) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        return value.toString();
-      }
-      return null;
-    }
-
-    DateTime readDate(List<String> keys, String fieldName) {
-      for (final key in keys) {
-        final value = json[key];
-        if (value == null) continue;
-        if (value is DateTime) return value;
-        if (value is String) {
-          final parsed = DateTime.tryParse(value);
-          if (parsed != null) return parsed;
-        }
-      }
-      throw FormatException('Missing "$fieldName" in member JSON data.');
-    }
+    // Parse memberSince from various formats
+    final memberSinceStr = json['memberSince'] ?? json['member_since'] ?? json['joinDate'];
 
     return Member(
-      id: readString(['id', 'memberId', 'member_id'], 'id'),
-      name: readString(['name', 'fullName', 'full_name'], 'name'),
-      email: readString(['email'], 'email'),
-      phone: readString(['phone', 'contactNumber', 'contact_number'], 'phone',
-          defaultValue: ''),
-      memberType: readString(
-        ['memberType', 'member_type', 'type'],
-        'memberType',
-        defaultValue: 'student',
-      ),
-      memberSince: readDate(
-        ['memberSince', 'member_since', 'joinDate', 'join_date', 'created_at'],
-        'memberSince',
-      ),
-      profileImageUrl: readOptionalString(
-        ['profileImageUrl', 'profile_image_url'],
-      ),
+      id: json['id'] ?? json['memberId'] as String,
+      name: json['name'] as String,
+      email: json['email'] as String,
+      phone: json['phone'] ?? '',
+      memberType: json['memberType'] ?? json['member_type'] ?? 'student',
+      memberSince: DateTime.parse(memberSinceStr as String),
+      profileImageUrl: json['profileImageUrl'] ?? json['profile_image_url'] as String?,
     );
   }
 
+  /// Convert Member to JSON (snake_case for Supabase)
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,

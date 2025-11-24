@@ -37,12 +37,9 @@ dependencies:
   go_router: ^14.6.2
   flutter_riverpod: ^2.6.1
   intl: ^0.19.0
-  supabase_flutter: ^2.5.5
-  flutter_dotenv: ^5.1.0
 
-  # Floor ORM for SQLite database
-  floor: ^1.5.0
-  sqflite: ^2.3.3+1
+  # Supabase for cloud backend
+  supabase_flutter: ^2.8.0
 
 dev_dependencies:
   flutter_test:
@@ -54,10 +51,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-
-  # Floor code generation
-  floor_generator: ^1.5.0
-  build_runner: ^2.4.13
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,7 +66,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/data/
-    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

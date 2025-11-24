@@ -1,20 +1,30 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import '../../domain/contracts/library_repository.dart';
 import '../../domain/entities/book.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
-  final SupabaseClient _client;
-  LibraryRepositoryImpl(this._client);
+  List<Book>? _books;
 
   /// Load library items from JSON file
   Future<List<Book>> _loadBooks() async {
-    try {
-      final response = await _client.from('books').select();
+    if (_books != null) return _books!;
 
-      final List<dynamic> data = response as List;
-      return data.map((json) => Book.fromJson(json)).toList();
+    try {
+      // Load library catalog
+      final String catalogJson =
+          await rootBundle.loadString('assets/data/library_catalog_json.json');
+      final List<dynamic> catalogData = json.decode(catalogJson);
+
+      // Create Book entities (only Books are supported)
+      _books = catalogData
+          .where((itemJson) => itemJson['type'] == 'Book')
+          .map((itemJson) => Book.fromJson(itemJson))
+          .toList();
+
+      return _books!;
     } catch (e) {
-      throw Exception('Failed to load books: $e');
+      throw Exception('Failed to load library items: $e');
     }
   }
 
@@ -25,60 +35,66 @@ class LibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<Book> getItem(String id) async {
-    return await _client
-        .from('books')
-        .select()
-        .eq("id", id)
-        .single()
-        .then((json) => Book.fromJson(json));
+    final books = await _loadBooks();
+    try {
+      return books.firstWhere((book) => book.id == id);
+    } catch (e) {
+      throw Exception('Book with ID $id not found');
+    }
   }
 
   @override
   Future<List<Book>> searchItems(String query) async {
-    return await _client
-        .from('books')
-        .select()
-        .ilike('title', '%$query%')
-        .then((data) =>
-            (data as List).map((json) => Book.fromJson(json)).toList());
+    final books = await _loadBooks();
+    final lowerQuery = query.toLowerCase();
+
+    return books.where((book) {
+      // Search in title
+      if (book.title.toLowerCase().contains(lowerQuery)) return true;
+
+      // Search in description
+      if (book.description != null &&
+          book.description!.toLowerCase().contains(lowerQuery)) {
+        return true;
+      }
+
+      // Note: To search by author name, you need to query AuthorRepository separately
+      return false;
+    }).toList();
   }
 
   @override
   Future<List<Book>> getItemsByCategory(String category) async {
-    return await _client
-        .from('books')
-        .select()
-        .eq('category', category)
-        .then((data) =>
-            (data as List).map((json) => Book.fromJson(json)).toList());
-  }
-
-  @override
-  Future<List<Book>> getAvailableItems() async {
-    return await _client
-        .from('books')
-        .select()
-        .eq('is_available', true)
-        .then((data) =>
-            (data as List).map((json) => Book.fromJson(json)).toList());
-  }
-
-  @override
-  Future<List<Book>> getItemsByAuthor(String authorId) async {
-    final response = await _client.from('books').select();
-    final List<dynamic> data = response as List;
-    return data
-        .map((json) => Book.fromJson(json))
-        .where((book) => book.authorId == authorId)
+    final books = await _loadBooks();
+    final lowerCategory = category.toLowerCase();
+    return books
+        .where((book) => book.category.toLowerCase() == lowerCategory)
         .toList();
   }
 
   @override
+  Future<List<Book>> getAvailableItems() async {
+    final books = await _loadBooks();
+    return books.where((book) => book.isAvailable).toList();
+  }
+
+  @override
+  Future<List<Book>> getItemsByAuthor(String authorId) async {
+    final books = await _loadBooks();
+    return books.where((book) => book.authorId == authorId).toList();
+  }
+
+  @override
   Future<void> updateBookAvailability(String bookId, bool isAvailable) async {
-    await _client
-        .from('books')
-        .update({'is_available': isAvailable})
-        .eq('id', bookId);
+    final books = await _loadBooks();
+    final index = books.indexWhere((book) => book.id == bookId);
+
+    if (index == -1) {
+      throw Exception('Book with ID $bookId not found');
+    }
+
+    // Update the book in the cached list
+    _books![index] = books[index].copyWith(isAvailable: isAvailable);
   }
 
   // ==================== Stream methods (convert Future to Stream) ====================
@@ -121,16 +137,35 @@ class LibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<void> addItem(Book book) async {
-    await _client.from('books').insert(book.toJson());
+    final books = await _loadBooks();
+    if (books.any((b) => b.id == book.id)) {
+      throw Exception('Book with ID ${book.id} already exists');
+    }
+    _books!.add(book);
   }
 
   @override
   Future<void> updateItem(Book book) async {
-    await _client.from('books').update(book.toJson()).eq('id', book.id);
+    final books = await _loadBooks();
+    final index = books.indexWhere((b) => b.id == book.id);
+    if (index == -1) {
+      throw Exception('Book with ID ${book.id} not found');
+    }
+    _books![index] = book;
   }
 
   @override
   Future<void> deleteItem(String id) async {
-    await _client.from('books').delete().eq('id', id);
+    final books = await _loadBooks();
+    final index = books.indexWhere((b) => b.id == id);
+    if (index == -1) {
+      throw Exception('Book with ID $id not found');
+    }
+    _books!.removeAt(index);
+  }
+
+  /// Clear cache (useful for testing or refresh)
+  void clearCache() {
+    _books = null;
   }
 }

@@ -23,22 +23,22 @@ class Author {
     return currentYear - birthYear!;
   }
 
-  /// Convert Author to JSON
+  /// Convert Author to JSON (snake_case for Supabase)
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
-        'profileImageUrl': profileImageUrl,
+        'profile_image_url': profileImageUrl,
         'biography': biography,
-        'birthYear': birthYear,
+        'birth_year': birthYear,
       };
 
-  /// Create Author from JSON
+  /// Create Author from JSON (supports both camelCase and snake_case)
   factory Author.fromJson(Map<String, dynamic> json) => Author(
         id: json['id'] as String,
         name: json['name'] as String,
-        profileImageUrl: json['profileImageUrl'] as String?,
+        profileImageUrl: json['profileImageUrl'] ?? json['profile_image_url'] as String?,
         biography: json['biography'] as String?,
-        birthYear: json['birthYear'] as int?,
+        birthYear: json['birthYear'] ?? json['birth_year'] as int?,
       );
 
   @override
