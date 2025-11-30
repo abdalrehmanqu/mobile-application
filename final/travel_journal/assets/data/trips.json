@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Paris Adventure",
+    "destination": "Paris, France",
+    "startDate": "2024-06-15",
+    "endDate": "2024-06-22",
+    "imageUrl": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800"
+  },
+  {
+    "id": 2,
+    "name": "Tokyo Experience",
+    "destination": "Tokyo, Japan",
+    "startDate": "2024-08-10",
+    "endDate": "2024-08-20",
+    "imageUrl": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800"
+  },
+  {
+    "id": 3,
+    "name": "New York Exploration",
+    "destination": "New York, USA",
+    "startDate": "2024-09-05",
+    "endDate": "2024-09-12",
+    "imageUrl": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800"
+  },
+  {
+    "id": 4,
+    "name": "Dubai Luxury",
+    "destination": "Dubai, UAE",
+    "startDate": "2024-11-01",
+    "endDate": "2024-11-07",
+    "imageUrl": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800"
+  },
+  {
+    "id": 5,
+    "name": "Barcelona Getaway",
+    "destination": "Barcelona, Spain",
+    "startDate": "2024-12-20",
+    "endDate": "2024-12-27",
+    "imageUrl": "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800"
+  }
+]

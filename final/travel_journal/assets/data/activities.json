@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "title": "Visit Eiffel Tower",
+    "description": "Take elevator to the top and enjoy panoramic views of Paris",
+    "isCompleted": true,
+    "tripId": 1
+  },
+  {
+    "id": 2,
+    "title": "Louvre Museum Tour",
+    "description": "Explore the world's largest art museum and see the Mona Lisa",
+    "isCompleted": true,
+    "tripId": 1
+  },
+  {
+    "id": 3,
+    "title": "Seine River Cruise",
+    "description": "Evening boat ride along the Seine with dinner",
+    "isCompleted": false,
+    "tripId": 1
+  },
+  {
+    "id": 4,
+    "title": "Visit Montmartre",
+    "description": "Walk through the historic Montmartre district and visit Sacré-Cœur",
+    "isCompleted": false,
+    "tripId": 1
+  },
+  {
+    "id": 5,
+    "title": "Shibuya Crossing",
+    "description": "Experience the famous scramble crossing in Shibuya",
+    "isCompleted": false,
+    "tripId": 2
+  },
+  {
+    "id": 6,
+    "title": "Tokyo Skytree Visit",
+    "description": "Climb to the observation deck for stunning city views",
+    "isCompleted": false,
+    "tripId": 2
+  },
+  {
+    "id": 7,
+    "title": "Sushi Making Class",
+    "description": "Learn to make authentic sushi from a master chef",
+    "isCompleted": false,
+    "tripId": 2
+  },
+  {
+    "id": 8,
+    "title": "Tsukiji Fish Market",
+    "description": "Early morning visit to the outer market for fresh seafood",
+    "isCompleted": false,
+    "tripId": 2
+  },
+  {
+    "id": 9,
+    "title": "Asakusa Temple",
+    "description": "Visit the historic Senso-ji Temple and shopping street",
+    "isCompleted": false,
+    "tripId": 2
+  },
+  {
+    "id": 10,
+    "title": "Statue of Liberty Ferry",
+    "description": "Take the ferry to Liberty Island and Ellis Island",
+    "isCompleted": false,
+    "tripId": 3
+  },
+  {
+    "id": 11,
+    "title": "Central Park Walk",
+    "description": "Stroll through Central Park and visit Bethesda Fountain",
+    "isCompleted": false,
+    "tripId": 3
+  },
+  {
+    "id": 12,
+    "title": "Broadway Show",
+    "description": "Watch a evening Broadway musical performance",
+    "isCompleted": false,
+    "tripId": 3
+  },
+  {
+    "id": 13,
+    "title": "Times Square at Night",
+    "description": "Experience the bright lights and energy of Times Square",
+    "isCompleted": false,
+    "tripId": 3
+  },
+  {
+    "id": 14,
+    "title": "Burj Khalifa Visit",
+    "description": "Go up to the observation deck of the world's tallest building",
+    "isCompleted": false,
+    "tripId": 4
+  },
+  {
+    "id": 15,
+    "title": "Desert Safari",
+    "description": "4x4 desert adventure with dinner and entertainment",
+    "isCompleted": false,
+    "tripId": 4
+  },
+  {
+    "id": 16,
+    "title": "Dubai Mall Shopping",
+    "description": "Explore one of the world's largest shopping malls",
+    "isCompleted": false,
+    "tripId": 4
+  },
+  {
+    "id": 17,
+    "title": "Sagrada Familia Tour",
+    "description": "Visit Gaudí's famous unfinished basilica",
+    "isCompleted": false,
+    "tripId": 5
+  },
+  {
+    "id": 18,
+    "title": "Park Güell Walk",
+    "description": "Explore the colorful park designed by Antoni Gaudí",
+    "isCompleted": false,
+    "tripId": 5
+  },
+  {
+    "id": 19,
+    "title": "La Rambla Stroll",
+    "description": "Walk the famous tree-lined pedestrian street",
+    "isCompleted": false,
+    "tripId": 5
+  },
+  {
+    "id": 20,
+    "title": "Beach Day at Barceloneta",
+    "description": "Relax at Barcelona's famous urban beach",
+    "isCompleted": false,
+    "tripId": 5
+  }
+]
